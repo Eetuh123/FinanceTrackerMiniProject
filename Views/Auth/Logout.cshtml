@@ -1,0 +1,17 @@
+﻿@{
+	ViewData["Title"] = "Login";
+}
+<a>HEllo</a>
+<div class="text-center">
+	@if (User.Identity.IsAuthenticated)
+	{
+		<hi>Hello @(User.Identity.Name)!</hi>
+	}
+	else
+	{
+		<form asp-controller="Home" asp-action="Login" method="post">
+			<input name="name" placeholder="USERNAME" />
+			<input type="submit" />
+		</form>
+	}
+	</div>
