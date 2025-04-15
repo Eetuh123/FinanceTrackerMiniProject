@@ -9,11 +9,20 @@ namespace FinanceTracker.Models
         public ObjectId _id { get; set; } = ObjectId.GenerateNewId();
         [Required(ErrorMessage = "Username is required")]
         public string description { get; set; }
-        [Required(ErrorMessage = "Name is required")]
-        public string gategory { get; set; }
-        [Required(ErrorMessage = "Password is required")]
-        public string amount { get; set; }
+        [Required(ErrorMessage = "Category is required")]
+        public string category { get; set; }
+        [Required(ErrorMessage = "Amount is required")]
+        public int amount { get; set; }
+        public DateTime date { get; set; } = DateTime.Now;
         public ObjectId UserId { get; set; } = ObjectId.Empty;
 
+    }
+    public enum Category
+    {
+        Food,
+        Bills,
+        Entertainment,
+        Travel,
+        Health
     }
 }
