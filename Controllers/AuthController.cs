@@ -27,14 +27,12 @@ namespace FinanceTracker.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> LoginUser(string name, string password)
+        public async Task<IActionResult> LoginUser(string username, string password)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, name)
+                new Claim(ClaimTypes.Name, username)
             };
-            if(name == "admin")
-                claims.Add(new Claim(ClaimTypes.Role, "admin"));
 
             var claimsIdentity = new ClaimsIdentity(
                 claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -56,16 +54,29 @@ namespace FinanceTracker.Controllers
         {
             return View();
         }
-        public IActionResult RegisterUser(string name, string password)
+        [HttpPost]
+        public IActionResult RegisterUser(User user)
         {
-            DatabaseManipulator.Save(new User
+            try
             {
-                name = name,
-                password = password
-            });
-            LoginUser(name, password);
+                if (DatabaseManipulator.database.GetCollection<User>("User")
+                        .Find(u => u.username == user.username)
+                        .Any())
+                {
+                    ModelState.AddModelError("username", "Username is already taken.");
+                    return View("Register", user);
+                }
 
-            return RedirectToAction("Index", "Main");
+                DatabaseManipulator.Save(user);
+                LoginUser(user.username, user.password);
+
+                return RedirectToAction("Index", "Main");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View("Register", user);
+            }
         }
         public IActionResult Logout()
         {

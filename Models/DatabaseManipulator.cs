@@ -12,6 +12,7 @@ namespace FinanceTracker.Models
         private static MongoClientSettings? settings;
         private static MongoClient? client;
         public static IMongoDatabase? database;
+        private static object logger;
 
         public static void Initialize(IConfiguration configuration)
         {
@@ -24,35 +25,19 @@ namespace FinanceTracker.Models
             client = new MongoClient(settings);
             database = client.GetDatabase(DATABASE_NAME);
         }
-        public static T Save<T>(T record)
+        public static T Save<T>(T record) where T : IMongoDocument
         {
-            try
-            {
-                var collectionName = typeof(T).Name;
-                var collection = database.GetCollection<T>(collectionName);
 
-                var idOfThing = typeof(T).GetProperty("_id");
+            var collection = database.GetCollection<T>(typeof(T).Name);
+            var filter = Builders<T>.Filter.Eq("_id", record._id);
 
-                if (idOfThing == null)
-                {
-                    throw new Exception("No _Id found called" + typeof(T).Name);
-                }
-
-                var idValue = idOfThing.GetValue(record);
-                var filter = Builders<T>.Filter.Eq("_id", BsonValue.Create(idValue));
-
-                collection.ReplaceOne(
-                    filter,
-                    record,
-                    new ReplaceOptions { IsUpsert = true }
-                );
-            }
-            catch
-            {
-                Console.WriteLine("Something aint working");
-            }
-
+            collection.ReplaceOne(filter, record, new ReplaceOptions { IsUpsert = true });
             return record;
+
+        }
+        public interface IMongoDocument
+        {
+            ObjectId _id { get; set; }
         }
     }
 }
