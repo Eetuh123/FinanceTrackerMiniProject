@@ -5,17 +5,21 @@ using System.Security.Claims;
 
 namespace FinanceTracker.Controllers
 {
-    public class MoneyController : Controller
+    public class TransactionsController : Controller
     {
-        public IActionResult MoneyModal()
+        public IActionResult TransactionsModal()
         {
             return View();
         }
+
         [HttpPost]
         public IActionResult SaveTransaction(Transactions transactions)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var userId = ObjectId.Parse(userIdString);
+
+            if (!transactions.TrySetCurrentUserId(User))
+            {
+                return Unauthorized();
+            }
 
             DatabaseManipulator.Save(transactions);
 

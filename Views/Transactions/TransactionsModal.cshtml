@@ -12,7 +12,7 @@
 			}
 		</div>
 	}
-	<form asp-controller="Auth" asp-action="SaveCash" method="post">
+	<form asp-controller="Transactions" asp-action="SaveTransaction" method="post">
 		<div class="flex flex-col items-center w-50%">
 			@Html.TextBoxFor(m => m.description, new { @class = "border-2 border-pink-900 p-2 min-w-[10%]", placeholder = "Description" })
 			@Html.DropDownListFor(m => m.category,new SelectList(Enum.GetValues(typeof(Category))),"-- Select Category --", new { @class = "border-2 border-pink-900 p-2 min-w-[10%]", })
