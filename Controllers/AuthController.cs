@@ -29,9 +29,16 @@ namespace FinanceTracker.Controllers
         [HttpPost]
         public async Task<IActionResult> LoginUser(string username, string password)
         {
+
+            var user = DatabaseManipulator.database
+            .GetCollection<User>("User")
+                .Find(u => u.username == username && u.password == password)
+                .FirstOrDefault();
+
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, username)
+                new Claim(ClaimTypes.Name, username),
+                new Claim(ClaimTypes.NameIdentifier, user._id.ToString()),
             };
 
             var claimsIdentity = new ClaimsIdentity(
@@ -81,7 +88,7 @@ namespace FinanceTracker.Controllers
         public IActionResult Logout()
         {
             HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Index", "Main");
+            return RedirectToAction("Login", "Auth");
         }
         [Authorize]
         public IActionResult Privacy()

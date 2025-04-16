@@ -28,38 +28,6 @@ namespace FinanceTracker.Controllers
             }
             return View();
         }
-
-        [HttpPost]
-        public async Task<IActionResult> Login(string name)
-        {
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, name)
-            };
-            if (name == "admin")
-                claims.Add(new Claim(ClaimTypes.Role, "admin"));
-
-            var claimsIdentity = new ClaimsIdentity(
-                claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-            var authProperties = new AuthenticationProperties
-            {
-                AllowRefresh = true,
-                ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30),
-                IsPersistent = true
-            };
-
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity),
-                authProperties);
-            return RedirectToAction("Index", "Main");
-        }
-        public IActionResult Logout()
-        {
-            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Index", "Main");
-        }
         [Authorize]
         public IActionResult Privacy()
         {

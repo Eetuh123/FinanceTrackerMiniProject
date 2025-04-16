@@ -1,6 +1,7 @@
 ﻿@{
 	ViewData["Title"] = "Home Page";
 	@model FinanceTracker.Models.User
+	@model FinanceTracker.Models.Transactions
 }
 <div class="text-center">
 	@if (User.Identity.IsAuthenticated)
@@ -11,4 +12,5 @@
 	{
 		<h2>You are not logged in</h2>
 	}
+
 </div>
