@@ -1,6 +1,6 @@
-﻿@{
+﻿@model FinanceTracker.Models.HomeViewModel
+@{
 	ViewData["Title"] = "Home Page";
-    @model FinanceTracker.Models.HomeViewModel
 }
 <div class="text-center">
     @if (User.Identity.IsAuthenticated)
@@ -26,5 +26,40 @@ else
 {
     <p>You have no transactions yet.</p>
 }
-
+    <canvas id="myChart" width="400" height="200"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </div>
+
+<script>
+    // deserialize the arrays from your model
+    var labels   = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ChartLabels));
+    var income   = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.IncomeSeries));
+    var expense  = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ExpenseSeries));
+
+    var ctx = document.getElementById('myChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: 'Income',
+            data: income,
+            backgroundColor: 'rgba(75, 192, 192, 0.5)'
+          },
+          {
+            label: 'Expense',
+            data: expense,
+            backgroundColor: 'rgba(255, 99, 132, 0.5)'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          x: { stacked: true },
+          y: { stacked: true }
+        }
+      }
+    });
+</script>

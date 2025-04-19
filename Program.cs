@@ -11,7 +11,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
                 {
                     options.LoginPath = "/Auth/Login";
                     options.LogoutPath = "/Auth/Logout";
-                    options.AccessDeniedPath = "/Main/Index";
+                    options.AccessDeniedPath = "/Auth/Register";
                     options.ExpireTimeSpan = TimeSpan.FromDays(30);
                     options.Cookie.Name = "MYCOOKIE";
                 });

@@ -16,7 +16,7 @@
 		<div class="flex flex-col items-center w-50%">
 			@Html.TextBoxFor(m => m.description, new { @class = "border-2 border-pink-900 p-2 min-w-[10%]", placeholder = "Description" })
 			@Html.DropDownListFor(m => m.category,new SelectList(Enum.GetValues(typeof(Category))),"-- Select Category --", new { @class = "border-2 border-pink-900 p-2 min-w-[10%]", })
-			@Html.TextBoxFor(m => m.amount, new { @class = "border-2 border-pink-900 p-2 min-w-[10%]", placeholder = "Secret Password" })
+			@Html.TextBoxFor(m => m.amount, new { @class = "border-2 border-pink-900 p-2 min-w-[10%]", placeholder = "Money" })
 			<input class="border-2 border-pink-900 p-2 min-w-[10%]" type="submit" />
 		</div>
 	</form>
