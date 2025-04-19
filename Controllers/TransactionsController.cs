@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FinanceTracker.Controllers
 {
@@ -11,7 +12,6 @@ namespace FinanceTracker.Controllers
         {
             return View();
         }
-
         [HttpPost]
         public IActionResult SaveTransaction(Transactions transactions)
         {
@@ -24,6 +24,19 @@ namespace FinanceTracker.Controllers
             DatabaseManipulator.Save(transactions);
 
             return RedirectToAction("Index", "Main");
+        }
+        [Authorize]
+        [HttpGet("user‑transactions")]
+        public async Task<IActionResult> GetUserTransactions()
+        {
+            var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!ObjectId.TryParse(idClaim, out var userId))
+                return Unauthorized();
+
+            var transactions = await DatabaseManipulator
+                                   .GetTransactionsForUserAsync(userId);
+
+            return Ok(transactions);
         }
     }
 }

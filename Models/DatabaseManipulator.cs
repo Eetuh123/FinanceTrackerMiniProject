@@ -1,5 +1,6 @@
 ﻿using MongoDB.Driver;
 using MongoDB.Bson;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceTracker.Models
 {
@@ -34,6 +35,20 @@ namespace FinanceTracker.Models
             collection.ReplaceOne(filter, record, new ReplaceOptions { IsUpsert = true });
             return record;
 
+        }
+        public static Task<List<Transactions>> GetTransactionsForUserAsync(ObjectId userId)
+        {
+            return database!
+                .GetCollection<Transactions>(nameof(Transactions))
+                .Find(t => t.UserId == userId)
+                .ToListAsync();
+        }
+        public static T Delete<T>(T record) where T : IMongoDocument
+        {
+            var collection = database.GetCollection<T>(typeof(T).Name);
+            var filter = Builders<T>.Filter.Eq("_id", record._id);
+            collection.DeleteOne(filter);
+            return record;
         }
         public interface IMongoDocument
         {

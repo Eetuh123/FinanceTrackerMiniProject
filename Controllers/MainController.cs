@@ -1,8 +1,9 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Security.Claims;
 using FinanceTracker.Models;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using MongoDB.Bson;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,9 +17,20 @@ namespace FinanceTracker.Controllers
         {
             _logger = logger;
         }
-        public IActionResult Index()
+        [Authorize]
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!ObjectId.TryParse(idClaim, out var userId))
+                return Unauthorized();
+
+            var txs = await DatabaseManipulator.GetTransactionsForUserAsync(userId);
+            var vm = new HomeViewModel
+            {
+                UserName = User.Identity.Name!,
+                Transactions = txs
+            };
+            return View(vm);
         }
         public IActionResult Login()
         {

@@ -1,14 +1,15 @@
 ﻿@{
 	ViewData["Title"] = "Login";
+    @model FinanceTracker.Models.User
 }
 <div class="text-center">
-	<div class="h-screen flex justify-center items-center">
-		<form asp-controller="Auth" asp-action="LoginUser" method="post">
-			<div class="flex flex-col items-center w-50%">
-				<input class="border-2 border-pink-900 p-2 min-w-[10%]" name="name" placeholder="Jaakko" />
-				<input class="border-2 border-pink-900 p-2 min-w-[10%]" name="password" placeholder="salainen sana" />
-				<input class="border-2 border-pink-900 p-2 min-w-[10%]" type="submit" />
-			</div>
-		</form>
-	</div>
+    <div class="h-screen flex justify-center items-center">
+        <form asp-controller="Auth" asp-action="LoginUser" method="post">
+            <div class="flex flex-col items-center w-50%">
+                @Html.TextBoxFor(m => m.username, new { @class = "border-2 border-pink-900 p-2 min-w-[10%]", placeholder = "Username" })
+                @Html.PasswordFor(m => m.password, new { @class = "border-2 border-pink-900 p-2 min-w-[10%]", placeholder = "Secret Password" })
+                <input class="border-2 border-pink-900 p-2 min-w-[10%]" type="submit" />
+            </div>
+        </form>
+    </div>
 </div>
