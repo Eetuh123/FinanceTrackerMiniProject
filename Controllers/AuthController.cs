@@ -35,6 +35,11 @@ namespace FinanceTracker.Controllers
                 .Find(u => u.username == username && u.password == password)
                 .FirstOrDefault();
 
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, username),
