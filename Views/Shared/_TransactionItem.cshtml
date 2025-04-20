@@ -1,71 +1,96 @@
 ﻿@model FinanceTracker.Models.Transactions
 @Html.AntiForgeryToken()
 
-<li class="list-group-item d-flex justify-content-between align-items-center text-nowrap">
-    <span class="editable cursor-text" data-id="@Model._id">
-        @Model.date.ToShortDateString()
-    </span>
-    <input type="text"
-           data-field="date"
-           class="w-auto align-middle edit-input px-2 py-1 text-sm border border-gray-300 rounded inline-block"
-           data-id="@Model._id"
-           value="@Model.date.ToString("yyyy-MM-dd")" />
+<li class="flex items-center justify-between bg-white p-3 mb-2 rounded-lg shadow-sm hover:shadow-md transition-shadow min-w-[300px] w-full">
+    <div class="flex flex-1 items-center space-x-4 overflow-hidden">
 
-    <span class="editable cursor-text" data-id="@Model._id">
-        @Model.amount
-    </span>
-    <input type="text"
-           data-field="amount"
-           class="w-auto align-middle edit-input px-2 py-1 text-sm border border-gray-300 rounded inline-block"
-           data-id="@Model._id"
-           value="@Model.amount"
-           style="width:auto; vertical-align:middle;" />
+        <div class="flex-1 min-w-0">
+            <span class="editable block text-gray-800 font-medium cursor-pointer font-normal duration-300 transition-all hover:font-semibold whitespace-nowrap overflow-hidden truncate">
+                @Model.date.ToShortDateString()
+            </span>
+            <input type="date"
+                   data-field="date"
+                   data-id="@Model._id"
+                   value="@Model.date:yyyy-MM-dd"
+                   class="edit-input hidden mt-1 w-full text-sm border border-gray-300 rounded px-2 py-1" />
+        </div>
 
-    <span class="editable" data-id="@Model._id" style="cursor:text">
-        @Model.description
-    </span>
-    <input type="text"
-           data-field="description"
-           class="w-auto align-middle edit-input px-2 py-1 text-sm border border-gray-300 rounded inline-block"
-           data-id="@Model._id"
-           value="@Model.description"
-           style="width:auto; vertical-align:middle;" />
+        <div class="flex-1 min-w-0">
+            <span class="editable block whitespace-nowrap cursor-pointer font-normal duration-300 transition-all hover:font-semibold @(Model.amount < 0 ? "text-red-600" : "text-sky-600")">
+                @Model.amount.ToString("C")
+            </span>
+            <input type="text"
+                   inputmode="decimal"
+                   data-field="amount"
+                   data-id="@Model._id"
+                   value="@Model.amount"
+                   class="edit-input no-spinner hidden mt-1 w-full text-sm border border-gray-300 rounded px-2 py-1" />
+        </div>
+
+        <div class="flex-1 min-w-0">
+            <span class="editable block text-gray-800 cursor-pointer font-normal duration-300 transition-all hover:font-semibold whitespace-nowrap overflow-hidden truncate">
+                @Model.description
+            </span>
+            <input type="text"
+                   data-field="description"
+                   data-id="@Model._id"
+                   value="@Model.description"
+                   class="edit-input hidden mt-1 w-full text-sm border border-gray-300 rounded px-2 py-1" />
+        </div>
+    </div>
 </li>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+
     $(function(){
       $('.edit-input').hide();
     });
+
     $(document).on('click', '.editable', function() {
       var span  = $(this),
           input = span.next('.edit-input');
 
-      input.val(span.text().trim())
-           .show()
-           .focus();
+      input.show().focus();
       span.hide();
     });
+
     $(document).on('keypress', '.edit-input', function(e) {
       if (e.which === 13) $(this).blur();
     });
+
     $(document).on('focusout', '.edit-input', function() {
-      var input = $(this),
-          field = input.data('field'),
-          span  = input.prev('.editable'),
-          id    = input.data('id'),
-          val   = input.val();
+      var input        = $(this),
+          span         = input.prev('.editable'),
+          field        = input.data('field'),
+          id           = input.data('id'),
+          originalVal  = span.text().trim(),
+          newVal       = input.val().trim();
+
+      if (!newVal) {
+        input.val(originalVal);
+        span.text(originalVal).show();
+        input.hide();
+        return;
+      }
 
       $.post('/Transactions/UpdateField', {
         __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(),
         id: id,
         fieldName: field,
-        newValue: val
+        newValue: newVal
       })
-      .always(function() {
-        span.text(val).show();
-        input.prop('disabled', false)
-             .hide();
-      });
+    .always(function(response) {
+      if (response.success) {
+        span.text(response.formattedValue);
+      } else {
+
+        span.text(originalVal);
+        input.val(originalVal);
+      }
+
+      span.show();
+      input.hide();
+    });
     });
 </script>

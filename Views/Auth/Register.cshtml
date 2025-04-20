@@ -2,7 +2,7 @@
 @{
     ViewData["Title"] = "Register";
 }
-<div class="h-screen flex justify-center items-center bg-zinc-700 font-sans">
+<div class="h-screen flex justify-center items-center bg-zinc-200 font-sans">
     <form asp-controller="Auth"
           asp-action="RegisterUser"
           method="post"
@@ -23,24 +23,27 @@
 
         @Html.TextBoxFor(m => m.username, new
             {
-                @class = "w-full mb-4 p-3 border-2 border-neutral-900 bg-gray-100 text-neutral-900 rounded focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500",
+                @class = "w-full mb-1 p-3 border-2 border-neutral-900 bg-gray-100 text-neutral-900 rounded focus:border-pink-900 focus:outline-none focus:ring-2 focus:ring-pink-800",
                 placeholder = "Username"
             })
+        @Html.ValidationMessageFor(m => m.username, "", new { @class = "text-red-500 text-sm mb-4 block" })
 
         @Html.TextBoxFor(m => m.name, new
             {
-                @class = "w-full mb-4 p-3 border-2 border-neutral-900 bg-gray-100 text-neutral-900 rounded focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500",
+                @class = "w-full mb-1 p-3 border-2 border-neutral-900 bg-gray-100 text-neutral-900 rounded focus:border-pink-900 focus:outline-none focus:ring-2 focus:ring-pink-800",
                 placeholder = "Name"
             })
+        @Html.ValidationMessageFor(m => m.name, "", new { @class = "text-red-500 text-sm mb-4 block" })
 
         @Html.PasswordFor(m => m.password, new
             {
-                @class = "w-full mb-4 p-3 border-2 border-neutral-900 bg-gray-100 text-neutral-900 rounded focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500",
+                @class = "w-full mb-1 p-3 border-2 border-neutral-900 bg-gray-100 text-neutral-900 rounded focus:border-pink-900 focus:outline-none focus:ring-2 focus:ring-pink-800",
                 placeholder = "Password"
             })
+        @Html.ValidationMessageFor(m => m.password, "", new { @class = "text-red-500 text-sm mb-4 block" })
 
         <button type="submit"
-                class="w-full py-3 border-2 border-black bg-black text-white rounded font-semibold hover:bg-white hover:text-neutral-900 transition cursor-pointer">
+                class="w-full py-3 border-2 border-black bg-black text-white rounded font-semibold hover:bg-white hover:text-neutral-900 duration-300 transition cursor-pointer">
             Register
         </button>
     </form>

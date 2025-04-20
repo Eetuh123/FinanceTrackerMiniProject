@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using FinanceTracker.Models;
 using MongoDB.Driver;
+using System.Globalization;
 
 namespace FinanceTracker.Controllers
 {
@@ -16,6 +16,7 @@ namespace FinanceTracker.Controllers
             return View();
         }
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public IActionResult SaveTransaction(Transactions transactions)
         {
@@ -35,10 +36,10 @@ namespace FinanceTracker.Controllers
             return RedirectToAction("Index", "Main");
         }
         [HttpPost]
+        [Authorize]
         [ValidateAntiForgeryToken]
         public IActionResult UpdateField(string id, string fieldName, string newValue)
         {
-
             if (!ObjectId.TryParse(id, out var objId))
                 return Json(new { success = false, error = "Invalid Id" });
 
@@ -46,30 +47,41 @@ namespace FinanceTracker.Controllers
                                 .database!
                                 .GetCollection<Transactions>(nameof(Transactions));
 
-            UpdateDefinition<Transactions>? updateDef = fieldName switch
+            UpdateDefinition<Transactions>? updateDef = null;
+            string? formattedValue = null;
+
+            switch (fieldName)
             {
-                "description" => Builders<Transactions>
-                                    .Update
-                                    .Set(t => t.description, newValue),
-
-                "amount" => decimal.TryParse(newValue, out var amt)
-                            ? Builders<Transactions>
+                case "description":
+                    updateDef = Builders<Transactions>
                                 .Update
-                                .Set(t => t.amount, amt)
-                            : null,
+                                .Set(t => t.description, newValue);
+                    formattedValue = newValue;
+                    break;
 
-                "date" => DateTime.TryParse(newValue, out var dt)
-                          ? Builders<Transactions>
-                              .Update
-                              .Set(t => t.date, dt)
-                          : null,
+                case "amount":
+                    if (decimal.TryParse(newValue, out var amt))
+                    {
+                        updateDef = Builders<Transactions>
+                                    .Update
+                                    .Set(t => t.amount, amt);
+                        formattedValue = amt.ToString("C", CultureInfo.GetCultureInfo("fi-FI"));
+                    }
+                    break;
 
-                _ => null
-            };
+                case "date":
+                    if (DateTime.TryParse(newValue, out var dt))
+                    {
+                        updateDef = Builders<Transactions>
+                                    .Update
+                                    .Set(t => t.date, dt);
+                        formattedValue = dt.ToShortDateString();
+                    }
+                    break;
+            }
 
             if (updateDef == null)
                 return Json(new { success = false, error = "Invalid field or value" });
-
 
             var result = collection.UpdateOne(
                 Builders<Transactions>.Filter.Eq(t => t._id, objId),
@@ -79,10 +91,14 @@ namespace FinanceTracker.Controllers
             if (result.MatchedCount == 0)
                 return Json(new { success = false, error = "Record not found" });
 
-            return Json(new { success = true });
+            return Json(new
+            {
+                success = true,
+                formattedValue
+            });
         }
         [Authorize]
-        [HttpGet("user‑transactions")]
+        [HttpGet("user-transactions")]
         public async Task<IActionResult> GetUserTransactions()
         {
             var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -94,5 +110,6 @@ namespace FinanceTracker.Controllers
 
             return Ok(transactions);
         }
+
     }
 }

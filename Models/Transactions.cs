@@ -8,11 +8,15 @@ namespace FinanceTracker.Models
     public class Transactions : IMongoDocument
     {
         public ObjectId _id { get; set; } = ObjectId.GenerateNewId();
-        [Required(ErrorMessage = "Catheory is required")]
+        [Required(ErrorMessage = "Description is required")]
+        [StringLength(100, ErrorMessage = "Description can't exceed 100 characters")]
         public string description { get; set; }
+
         [Required(ErrorMessage = "Category is required")]
         public string category { get; set; }
+
         [Required(ErrorMessage = "Amount is required")]
+        [Range(-100000, 100000, ErrorMessage = "Amount must be between -100,000 and 100,000")]
         public int amount { get; set; }
         public DateTime date { get; set; } = DateTime.Now;
         public ObjectId UserId { get; set; } = ObjectId.Empty;
@@ -34,6 +38,7 @@ namespace FinanceTracker.Models
         Bills,
         Entertainment,
         Travel,
-        Health
+        Health,
+        Income,
     }
 }

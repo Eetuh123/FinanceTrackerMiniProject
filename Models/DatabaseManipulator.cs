@@ -1,6 +1,5 @@
 ﻿using MongoDB.Driver;
 using MongoDB.Bson;
-using Microsoft.AspNetCore.Mvc;
 
 namespace FinanceTracker.Models
 {
@@ -13,7 +12,6 @@ namespace FinanceTracker.Models
         private static MongoClientSettings? settings;
         private static MongoClient? client;
         public static IMongoDatabase? database;
-        private static object logger;
 
         public static void Initialize(IConfiguration configuration)
         {
@@ -42,6 +40,13 @@ namespace FinanceTracker.Models
                 .GetCollection<Transactions>(nameof(Transactions))
                 .Find(t => t.UserId == userId)
                 .ToListAsync();
+        }
+        public static Task<User?> GetUserByIdAsync(ObjectId userId)
+        {
+            return database!
+                .GetCollection<User>(nameof(User))
+                .Find(u => u._id == userId)
+                .FirstOrDefaultAsync();
         }
         public static T Delete<T>(T record) where T : IMongoDocument
         {
