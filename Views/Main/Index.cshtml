@@ -1,40 +1,60 @@
-﻿@model FinanceTracker.Models.HomeViewModel
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model FinanceTracker.Models.HomeViewModel
 @{
-	ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home Page";
 }
-<div class="text-center">
-    @if (User.Identity.IsAuthenticated)
-	{
-    <h2>Hello @User.Identity.Name</h2>
-	}
-	else
-	{
-    <h2>You are not logged in</h2>
-	}
-    @if (Model.Transactions?.Any() ?? false)
-{
-    <ul>
-        @foreach (var tx in Model.Transactions)
-    {
-        <li>
-            @tx.date.ToShortDateString() – @tx.amount – @tx.description
-        </li>
-    }
-    </ul>
-}
-else
-{
-    <p>You have no transactions yet.</p>
-}
-    <canvas id="myChart" width="400" height="200"></canvas>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div x-data="{ showAddModal: false }" class="h-screen w-full p-8">
+    <div class="flex space-x-8">
+        <!-- Left column -->
+            <div class="w-1/3">
+                <h2 class="text-2xl font-semibold mb-4 text-dark">Money Time</h2>
+                <button x-on:click="showAddModal = true"
+                        class="mb-4 bg-pink-900 text-white px-4 py-2 rounded">
+                    Add Cash
+                </button>
+                    @if (Model.Transactions?.Any() ?? false)
+                    {
+                        <ul class="list-group mt-4">
+                            @foreach (var tx in Model.Transactions)
+                            {
+                                <partial name="_TransactionItem" model="tx" />
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="mt-4">You have no transactions yet.</p>
+                    }
+            </div>
+            <!-- Right column -->
+            <div class="w-2/3 flex flex-col">
+                <canvas id="myChart" class="w-full h-48"></canvas>
+            </div>
+     </div>
 </div>
 
+    <!-- Modal overlay -->
+        <div x-show="showAddModal"
+             class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+             style="display: none;">
+                <div x-on:click.away="showAddModal = false"
+                     class="bg-white rounded-lg p-6 max-w-md w-full">
+                    <button x-on:click="showAddModal = false"
+                            class="float-right text-gray-600 hover:text-gray-800">
+                        ✕
+                    </button>
+                    <h3 class="text-xl font-semibold mb-4">Add Cash</h3>
+                    @await Html.PartialAsync("_AddCashModalPartial", new FinanceTracker.Models.Transactions())
+                </div>
+        </div>
+
 <script>
-    // deserialize the arrays from your model
-    var labels   = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ChartLabels));
-    var income   = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.IncomeSeries));
-    var expense  = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ExpenseSeries));
+    var labels  = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ChartLabels));
+    var income  = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.IncomeSeries));
+    var expense = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ExpenseSeries));
 
     var ctx = document.getElementById('myChart').getContext('2d');
     new Chart(ctx, {
@@ -42,16 +62,8 @@ else
       data: {
         labels: labels,
         datasets: [
-          {
-            label: 'Income',
-            data: income,
-            backgroundColor: 'rgba(75, 192, 192, 0.5)'
-          },
-          {
-            label: 'Expense',
-            data: expense,
-            backgroundColor: 'rgba(255, 99, 132, 0.5)'
-          }
+          { label: 'Income', data: income },
+          { label: 'Expense', data: expense }
         ]
       },
       options: {

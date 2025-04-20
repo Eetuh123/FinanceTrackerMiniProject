@@ -4,44 +4,42 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - FinanceTracker</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/FinanceTracker.styles.css" asp-append-version="true" />
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Main" asp-action="Index">FinanceTracker</a>
-                <ul class="navbar-nav flex ">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Transactions" asp-action="TransactionsModal">Money Time</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Auth" asp-action="Login">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Auth" asp-action="Register">Register</a>
-                    </li>
-                </ul>
+        <div class="mx-5 text-start">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <h1>Hello @User.Identity.Name!</h1>
+                    <form asp-controller="Auth" asp-action="Logout" method="post">
+                        <button type="submit" class="">Logout</button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-controller="Auth" asp-action="Login">Login</a>
+                    <a asp-controller="Auth" asp-action="Register">Register</a>
+                }
             </div>
-        </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
+    <div>
+        <main role="main">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - FinanceTracker - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
+    <footer class="text-muted">
+
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

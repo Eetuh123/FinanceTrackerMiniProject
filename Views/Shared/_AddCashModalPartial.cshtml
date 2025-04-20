@@ -1,0 +1,41 @@
+﻿@model FinanceTracker.Models.Transactions
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="text-red-500 font-semibold mb-4">
+        @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+        {
+            <div>@error.ErrorMessage</div>
+        }
+    </div>
+}
+
+<form asp-controller="Transactions"
+      asp-action="SaveTransaction"
+      method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="flex flex-col space-y-4">
+        @Html.TextBoxFor(m => m.description, new
+            {
+                @class = "border-2 border-pink-900 p-2",
+                placeholder = "Description"
+            })
+        @Html.DropDownListFor(m => m.category,
+                 new SelectList(Enum.GetValues(typeof(Category))),
+                 "-- Select Category --",
+                 new
+                 {
+                     @class = "border-2 border-pink-900 p-2"
+                 })
+        @Html.TextBoxFor(m => m.amount, new
+            {
+                @class = "border-2 border-pink-900 p-2",
+                placeholder = "Money"
+            })
+        <button type="submit"
+                class="bg-pink-900 text-white px-4 py-2 rounded">
+            Save
+        </button>
+    </div>
+</form>
