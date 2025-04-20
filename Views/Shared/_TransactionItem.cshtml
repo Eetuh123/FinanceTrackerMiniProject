@@ -1,0 +1,72 @@
+﻿@model FinanceTracker.Models.Transactions
+@Html.AntiForgeryToken()
+
+<li class="list-group-item d-flex justify-content-between align-items-center">
+    <span class="text-nowrap">
+        <span class="editable" data-id="@Model._id" style="cursor:text">
+            @Model.date.ToShortDateString()
+        </span>
+        <input type="text"
+               data-field="date"
+               class="edit-input form-control-sm d-inline-block d-none"
+               data-id="@Model._id"
+               value="@Model.date.ToString("yyyy-MM-dd")"
+               style="width:auto; vertical-align:middle;" />
+        <span class="editable" data-id="@Model._id" style="cursor:text">
+            @Model.amount
+        </span>
+        <input type="text"
+               data-field="amount"
+               class="edit-input form-control-sm d-inline-block d-none"
+               data-id="@Model._id"
+               value="@Model.amount"
+               style="width:auto; vertical-align:middle;" />
+
+
+        <span class="editable" data-id="@Model._id" style="cursor:text">
+            @Model.description
+        </span>
+        <input type="text"
+               data-field="description"
+               class="edit-input form-control-sm d-inline-block d-none"
+               data-id="@Model._id"
+               value="@Model.description"
+               style="width:auto; vertical-align:middle;" />
+</li>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).on('click', '.editable', function() {
+        var span  = $(this),
+            input = span.next('.edit-input');
+
+        input.val(span.text().trim())
+             .removeClass('d-none')
+             .show()
+             .focus();
+        span.hide();
+      });
+
+      $(document).on('keypress', '.edit-input', function(e) {
+        if (e.which === 13) $(this).blur();
+      });
+
+      $(document).on('focusout', '.edit-input', function() {
+        var input = $(this),
+		    field = input.data('field'),
+            span  = input.prev('.editable'),
+            id    = input.data('id'),
+            val   = input.val();
+
+        $.post('/Transactions/UpdateField', {
+          __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val(),
+          id: id,
+          fieldName: field,
+          newValue: val
+        })
+        .always(function() {
+          span.text(val).show();
+          input.prop('disabled', false)
+               .addClass('d-none');
+        });
+      });
+</script>
