@@ -5,23 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - FinanceTracker</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/FinanceTracker.styles.css" asp-append-version="true" />
 </head>
 <body>
     <header>
-        <div class="mx-5 text-start">
+        <div class="flex items-center w-screen py-4 px-8 text-neutral-900 text-2xl">
                 @if (User.Identity.IsAuthenticated)
                 {
                     <h1>Hello @User.Identity.Name!</h1>
-                    <form asp-controller="Auth" asp-action="Logout" method="post">
-                        <button type="submit" class="">Logout</button>
+                <form asp-controller="Auth" asp-action="Logout" method="post" class="ml-auto">
+                    <button type="submit" class="cursor-pointer font-semibold font-red-500 font-semibold hover:font-bold transition-all">Logout</button>
                     </form>
+                
                 }
                 else
                 {
-                    <a asp-controller="Auth" asp-action="Login">Login</a>
-                    <a asp-controller="Auth" asp-action="Register">Register</a>
+                <a asp-controller="Auth" asp-action="Login" class="font-semibold hover:font-bold transition-all">Login</a>
+                <a asp-controller="Auth" asp-action="Register" class="font-semibold hover:font-bold transition-all pl-4">Register</a>
                 }
             </div>
     </header>

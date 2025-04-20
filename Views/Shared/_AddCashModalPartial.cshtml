@@ -18,7 +18,7 @@
     <div class="flex flex-col space-y-4">
         @Html.TextBoxFor(m => m.description, new
             {
-                @class = "border-2 border-pink-900 p-2",
+                @class = "border-2 border-pink-900 p-2 rounded",
                 placeholder = "Description"
             })
         @Html.DropDownListFor(m => m.category,
@@ -26,15 +26,15 @@
                  "-- Select Category --",
                  new
                  {
-                     @class = "border-2 border-pink-900 p-2"
+                     @class = "border-2 border-pink-900 p-2 rounded"
                  })
         @Html.TextBoxFor(m => m.amount, new
             {
-                @class = "border-2 border-pink-900 p-2",
+                @class = "border-2 border-pink-900 p-2 rounded",
                 placeholder = "Money"
             })
         <button type="submit"
-                class="bg-pink-900 text-white px-4 py-2 rounded">
+                class="bg-pink-900 text-white px-4 py-2 rounded border border-pink-900 border-2 cursor-pointer hover:bg-white hover:text-neutral-900 font-semibold">
             Save
         </button>
     </div>

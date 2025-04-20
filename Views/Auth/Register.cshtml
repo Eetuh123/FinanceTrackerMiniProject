@@ -1,23 +1,47 @@
 ﻿@model FinanceTracker.Models.User
 @{
-	ViewData["Title"] = "Register";
+    ViewData["Title"] = "Register";
 }
-<div class="text-center">
-	@if (!ViewData.ModelState.IsValid)
-	{
-		<div class="text-red-500 font-semibold mb-4">
-			@foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-			{
-				<div>@error.ErrorMessage</div>
-			}
-		</div>
-	}
-	<form asp-controller="Auth" asp-action="RegisterUser" method="post">
-		<div class="flex flex-col items-center w-50%">
-			@Html.TextBoxFor(m => m.username, new { @class = "border-2 border-pink-900 p-2 min-w-[10%]", placeholder = "Username" })
-			@Html.TextBoxFor(m => m.name, new { @class = "border-2 border-pink-900 p-2 min-w-[10%]", placeholder = "Name" })
-			@Html.PasswordFor(m => m.password, new { @class = "border-2 border-pink-900 p-2 min-w-[10%]", placeholder = "Secret Password" })
-			<input class="border-2 border-pink-900 p-2 min-w-[10%]" type="submit"  />
-		</div>
-	</form>
-	</div>
+<div class="h-screen flex justify-center items-center bg-zinc-700 font-sans">
+    <form asp-controller="Auth"
+          asp-action="RegisterUser"
+          method="post"
+          class="bg-white p-8 rounded-md shadow-lg w-full max-w-md">
+        <h2 class="text-2xl font-medium text-neutral-900 mb-6 text-center">
+            Create Account
+        </h2>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="text-black font-semibold mb-4">
+                @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <div>@error.ErrorMessage</div>
+                }
+            </div>
+        }
+
+        @Html.TextBoxFor(m => m.username, new
+            {
+                @class = "w-full mb-4 p-3 border-2 border-neutral-900 bg-gray-100 text-neutral-900 rounded focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500",
+                placeholder = "Username"
+            })
+
+        @Html.TextBoxFor(m => m.name, new
+            {
+                @class = "w-full mb-4 p-3 border-2 border-neutral-900 bg-gray-100 text-neutral-900 rounded focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500",
+                placeholder = "Name"
+            })
+
+        @Html.PasswordFor(m => m.password, new
+            {
+                @class = "w-full mb-4 p-3 border-2 border-neutral-900 bg-gray-100 text-neutral-900 rounded focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500",
+                placeholder = "Password"
+            })
+
+        <button type="submit"
+                class="w-full py-3 border-2 border-black bg-black text-white rounded font-semibold hover:bg-white hover:text-neutral-900 transition cursor-pointer">
+            Register
+        </button>
+    </form>
+</div>
